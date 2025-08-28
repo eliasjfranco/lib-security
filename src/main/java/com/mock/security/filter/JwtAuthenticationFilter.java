@@ -1,5 +1,6 @@
 package com.mock.security.filter;
 
+import com.mock.security.dto.AuthDetails;
 import com.mock.security.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,14 +37,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             final String username = jwtService.extractUsername(token);
-            final Integer companyId = jwtService.extractTenantId(token);
+            final Integer tenantId = jwtService.extractTenantId(token);
             final String role = jwtService.extractRole(token);
 
             Collection<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
-            authentication.setDetails(companyId);
-            authentication.setDetails(new WebAuthenticationDetails(request));
+            authentication.setDetails(new AuthDetails(tenantId, new WebAuthenticationDetails(request)));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (Exception ignored) {}
 
