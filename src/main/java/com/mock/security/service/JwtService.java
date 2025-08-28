@@ -23,6 +23,7 @@ public class JwtService {
     public String generateToken(String username, Integer tenantId, Map<String, Object> extraClaims, String role) {
         Map<String, Object> claims = new HashMap<>(Optional.ofNullable(extraClaims).orElse(new HashMap<>()));
         claims.put("roles", props.getRolePrefix() + role);
+        claims.put("tenantId", tenantId);
         long now = System.currentTimeMillis();
         return Jwts.builder()
                 .subject(username)
